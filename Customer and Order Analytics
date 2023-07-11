@@ -1,19 +1,22 @@
 #In this SQL, I'm querying a database with multiple tables in it to quantify statistics about customer and order data.
 
-/*How many orders were placed in Janaury*/
+/*How many orders were placed in Janaury */
+
 SELECT COUNT(orderID)
 FROM BIT_DB.JanSales
 WHERE length(orderID) = 6
 AND orderID <> 'Order ID';
 
-/*How many of January Orders were to purchase an iPhone*/
+/*How many of January Orders were to purchase an iPhone */
+
 SELECT COUNT(orderID)
 FROM BIT_DB.JanSales
 WHERE length(orderID) = 6
 AND orderID <> 'Order ID'
 AND Product = "iPhone";
 
-/* Select customer account numbers for all the orders that were placed in February*/
+/* Select customer account numbers for all the orders that were placed in February */
+
 SELECT distinct c.acctnum
 FROM BIT_DB.customers c
 INNER JOIN BIT_DB.FebSales fs
@@ -21,7 +24,7 @@ ON c.order_id = fs.orderID
 WHERE length(fs.orderID) = 6
 AND fs.orderID <> 'Order ID';
 
-/* Find the product that was the cheapest one sold in January and at what price*/
+/* Find the product that was the cheapest one sold in January and at what price */
 
 SELECT product, min(price) as price
 FROM BIT_DB.JanSales Jan 
@@ -29,7 +32,8 @@ GROUP BY product, price
 ORDER BY price ASC
 LIMIT 1;
 
-/* Find total revenue for each product sold in January*/
+/* Find total revenue for each product sold in January */
+
 SELECT Product, SUM(Quantity)*price as revenue
 FROM BIT_DB.JanSales
 WHERE length(orderID) = 6
@@ -37,7 +41,8 @@ AND orderID <> 'Order ID'
 GROUP BY Product;
 
 /* Which products were sold in February at 548 Lincoln Street, Seattle, WA 98101, how many
-of each were sold, and what was the total revenue*/
+of each were sold, and what was the total revenue */
+
 SELECT product,SUM(Quantity),SUM(Quantity)*price as Feb_Revenue
 FROM BIT_DB.FebSales
 WHERE location = '548 Lincoln St, Seattle, WA 98101'
@@ -46,7 +51,8 @@ AND orderID <> 'Order ID'
 GROUP BY Product;
 
 /* How many customers ordered more than 2 products at a time in February, and what was the average
-amount spent for those customers*/
+amount spent for those customers */
+
 SELECT 
 COUNT(distinct cust.acctnum)as Quanity_Customers, 
 AVG(quantity*price) as Avg_Spent
@@ -56,3 +62,51 @@ ON FEB.orderid=cust.order_id
 WHERE Feb.Quantity>2
 AND length(orderid) = 6 
 AND orderid <> 'Order ID';
+
+/* List all the products sold in Los Angeles in February, and include how many of each were sold */
+SELECT Product, SUM(quantity) as Total_Units_Sold
+FROM BIT_DB.FebSales 
+WHERE location like '%Los Angeles%'
+GROUP BY Product
+
+/* Find all locations in New York that received at least 3 orders in January and how many orders they each received */
+
+SELECT distinct location, count(orderID)
+FROM BIT_DB.JanSales
+WHERE location LIKE '%NY%'
+AND length(orderid)=6
+AND orderID <> 'Order ID'
+GROUP BY location
+HAVING count(orderID)>2
+
+/* How many type of headphone were sold in February and how much were sold of each */
+
+SELECT distinct Product, SUM(Quantity)
+FROM BIT_DB.FebSales
+WHERE Product like '%Headphones'
+GROUP BY Product
+
+/* Find the average amount spent per account in February */
+
+SELECT SUM(fs.Quantity*fs.price)/ count(c.acctnum)
+FROM BIT_DB.FebSales fs
+JOIN customers c
+ON fs.orderID = c.order_id
+WHERE length(orderid)=6
+AND orderID <> 'Order ID'
+
+/* Find the average quantity of products purchased per account in February */
+SELECT SUM(Quantity)/ count(c.acctnum)as avg_product_purchase_per_account
+FROM BIT_DB.FebSales fs
+LEFT JOIN BIT_DB.customers c
+ON fs.orderid=c.order_id
+WHERE length(orderid) = 6 
+AND orderid <> 'Order ID'
+
+/* Find the product that brought in the most revenue in January and how much revenue it brought in total */
+
+SELECT Product,SUM(Quantity*price)as Revenue_per_product
+FROM BIT_DB.JanSales
+GROUP BY Product
+Order by Revenue_per_product DESC
+LIMIT 1
