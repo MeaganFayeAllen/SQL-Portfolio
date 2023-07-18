@@ -1,0 +1,25 @@
+# Downloaded data relating to Customers, Invoices, artists, etc. and then performed analysis on the data
+
+/* Show Customers their full names, customer ID and country for all customers besides US customers */
+
+SELECT
+  CustomerId,
+  FirstName,
+  LastName,
+  Country
+FROM
+  chinook.customers
+WHERE
+  Country <> 'USA';
+
+/* Show only Customers from Brazil */
+
+SELECT
+  *
+FROM
+  chinook.customers
+WHERE
+  Country = 'Brazil';
+
+Find the Invoices of customers who are from Brazil and display the customer's full name, Invoice ID, Date of the invoice,
+and billing country */
