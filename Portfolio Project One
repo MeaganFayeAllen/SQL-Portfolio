@@ -1,6 +1,6 @@
-# Downloaded data relating to Customers, Invoices, artists, etc. and then performed analysis on the data
+# Downloaded data relating to Customers, Invoices, artists, etc., and then performed exploratory analysis on the data
 
-/* Show Customers their full names, customer ID and country for all customers besides US customers */
+/* Show Customers their full names, customer ID, and country for all customers besides US customers */
 
 SELECT
 CustomerId,
